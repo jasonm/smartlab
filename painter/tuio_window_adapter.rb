@@ -1,8 +1,5 @@
 class TuioWindowAdapter
   def initialize(window)
-
-    puts "hacking TuioClient"
-
     @tc = TuioClient.new(:port => 3333)
 
     # @tc.on_object_creation do | to |
@@ -36,5 +33,3 @@ class TuioWindowAdapter
     puts "TUIO init: #{Thread.current.object_id}\t\twith pri #{Thread.current.priority}"
   end
 end
-
-# <div style="clear: both;"> </div>
