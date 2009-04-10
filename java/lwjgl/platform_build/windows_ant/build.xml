@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<project name="lwjgl native code, native code" basedir="../../bin/lwjgl" default="compile">
+	<property name="native" location="../../src/native"/>
+	<property environment="env"/>
+	<property name="sdkhome" location="${env.MSSDK}"/>
+	<property name="program_files" location="${env.ProgramFiles}"/>
+	<property name="alhome" location="${program_files}\OpenAL 1.1 with EFX SDK"/>
+	<property name="dllname" value="lwjgl.dll"/>
+
+	<target name="compile_dir">
+		<apply dir="." failonerror="true" executable="cl" dest="." skipemptyfilesets="true">
+			<arg line="/Ox /W2 /nologo /Ox /Ob2 /Oi /Ot /Oy /FD /EHsc /MT /Gy /W2 /nologo /c"/>
+			<arg value="/I${sdkhome}\include"/>
+			<arg value="/I${alhome}\include"/>
+			<arg value="/I${java.home}\..\include"/>
+			<arg value="/I${java.home}\..\include\win32"/>
+			<arg value="/I${native}\common"/>
+			<arg value="/I${native}\windows"/>
+			<srcfile/>
+			<fileset dir="${native}/windows" includes="*.c"/>
+			<fileset dir="${native}/common" includes="*.c"/>
+			<fileset dir="${native}/generated" includes="*.c"/>
+			<mapper type="glob" from="*.c" to="*.obj"/>
+		</apply>
+	</target>
+
+	<target name="link">
+		<apply dir="." parallel="true" executable="cl" failonerror="true">
+			<arg line="/LD /nologo"/>
+			<srcfile/>
+			<arg line="/Fe${dllname} /link"/>
+			<arg value="/LIBPATH:${java.home}\..\lib"/>
+			<arg value="/LIBPATH:${sdkhome}\lib"/>
+			<arg value="/LIBPATH:${alhome}\libs"/>
+			<arg value="/OPT:REF"/>
+			<arg value="/OPT:ICF"/>
+			<arg line="/DLL /DELAYLOAD:jawt.dll ${libs}"/>
+			<fileset dir="." includes="*.obj"/>
+		</apply>
+	</target>
+
+	<target name="clean">
+		<delete>
+			<fileset dir="." includes="*.obj"/>
+			<fileset dir="." includes="*.dll"/>
+			<fileset dir="." includes="*.exp"/>
+			<fileset dir="." includes="*.lib"/>
+		</delete>
+	</target>
+	
+	<target name="compile">
+		<echo message="${sdkhome}"/>
+		<echo message="${program_files}"/>
+		<property name="libs" value="Kernel32.lib ole32.lib OpenGL32.Lib Version.lib user32.lib Gdi32.lib Advapi32.lib jawt.lib delayimp.lib winmm.lib"/>
+		<antcall target="compile_dir"/>
+		<antcall target="link"/>
+    </target>
+</project>
+
