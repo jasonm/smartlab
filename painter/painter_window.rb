@@ -24,7 +24,7 @@ class PainterWindow < Gosu::Window
   end
 
   def update
-    puts "gosu: #{Thread.current.object_id}\t\twith pri #{Thread.current.priority}"
+    Thread.pass
   end
 
   def update_paintbrush(x_factor, y_factor)
